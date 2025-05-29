@@ -1,0 +1,11 @@
+[package]
+name = "w3-tool"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+alloy = { version = "0.15.9", features = ["full"] }
+alloy-provider = { version = "0.15.9", features = ["anvil-node"] }
+clap = { version = "4.5.38", features = ["derive"] }
+eyre = "0.6.12"
+tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
