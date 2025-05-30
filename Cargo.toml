@@ -1,9 +1,10 @@
-[package]
-name = "w3-tool"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [
+    "w3-tool",
+    "w3-tool-cli"
+]
 
-[dependencies]
+[workspace.dependencies]
 alloy = { version = "0.15.9", features = ["full"] }
 alloy-provider = { version = "0.15.9", features = ["anvil-node"] }
 clap = { version = "4.5.38", features = ["derive"] }

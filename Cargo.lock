@@ -3959,10 +3959,20 @@ version = "0.1.0"
 dependencies = [
  "alloy",
  "alloy-provider",
+ "eyre",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "w3-tool-cli"
+version = "0.1.0"
+dependencies = [
  "clap",
  "eyre",
  "serde_json",
  "tokio",
+ "w3-tool",
 ]
 
 [[package]]

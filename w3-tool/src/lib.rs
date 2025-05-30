@@ -1,10 +1,7 @@
-//! Example of generating code from ABI file using the `sol!` macro to interact with the contract.
-
 use alloy::{primitives::Address, providers::ProviderBuilder, sol};
 use alloy_provider::Provider;
 use eyre::Result;
-use clap::Parser;
-use serde_json::{json, to_string_pretty, from_str};
+use serde_json::{json, to_string_pretty};
 use std::fs::File;
 use std::io::Write;
 
@@ -16,35 +13,26 @@ sol!(
     "src/abi/IERC20.json"
 );
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    /// Token Addresses (JSON array format) e.g. '["0x123..", "0x456.."]'
-    #[arg(short = 'a', long)]
-    addresses: String,
-
-    /// RPC url e.g. 'https://rpc.ankr.com/eth'
-    #[arg(short = 'r', long)]
-    rpc_url: String,
-
-    /// Output as JSON file
-    #[arg(short = 'j', long)]
-    json: bool,
+pub struct TokenInfo {
+    pub address: Address,
+    pub name: String,
+    pub symbol: String,
+    pub decimals: u8,
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    let args = Args::parse();
-    
-    // Parse addresses from JSON array
-    let addresses: Vec<String> = from_str(&args.addresses)?;
+pub async fn get_token_info(
+    addresses: Vec<String>,
+    rpc_url: String,
+    output_json: bool,
+) -> Result<()> {
+    // Parse addresses
     let addresses: Vec<Address> = addresses
         .into_iter()
         .map(|addr| Address::parse_checksummed(&addr, None))
         .collect::<Result<Vec<_>, _>>()?;
 
-    // define rpc url
-    let rpc_url = args.rpc_url.parse()?;
+    // Setup provider
+    let rpc_url = rpc_url.parse()?;
     let provider = ProviderBuilder::new().connect_http(rpc_url);
 
     let mut all_token_data = Vec::new();
@@ -74,8 +62,8 @@ async fn main() -> Result<()> {
     }
     println!("\n--------------------------------");
 
-    // Write to JSON file if --json flag is set
-    if args.json {
+    // Write to JSON file if output_json is true
+    if output_json {
         let json_string = to_string_pretty(&all_token_data)?;
         let mut file = File::create("token_data.json")?;
         file.write_all(json_string.as_bytes())?;
@@ -83,4 +71,4 @@ async fn main() -> Result<()> {
     }
 
     Ok(())
-}
+} 
