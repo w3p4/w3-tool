@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use eyre::Result;
 use serde_json::from_str;
-use w3_tool::get_token_info;
+use tokens::get_token_info;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

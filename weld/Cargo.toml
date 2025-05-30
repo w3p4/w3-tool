@@ -1,10 +1,10 @@
 [package]
-name = "w3-tool-cli"
+name = "weld"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-w3-tool = { path = "../w3-tool" }
+tokens = { path = "../tokens" }
 clap = { workspace = true }
 eyre = { workspace = true }
 tokio = { workspace = true }

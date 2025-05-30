@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "w3-tool",
-    "w3-tool-cli"
+    "tokens",
+    "weld"
 ]
 
 [workspace.dependencies]
