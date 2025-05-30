@@ -3961,6 +3961,7 @@ dependencies = [
  "alloy-provider",
  "clap",
  "eyre",
+ "serde_json",
  "tokio",
 ]
 

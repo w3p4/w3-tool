@@ -4,6 +4,9 @@ use alloy::{primitives::Address, providers::ProviderBuilder, sol};
 use alloy_provider::Provider;
 use eyre::Result;
 use clap::Parser;
+use serde_json::{json, to_string_pretty, from_str};
+use std::fs::File;
+use std::io::Write;
 
 // Codegen from ABI file to interact with the contract.
 sol!(
@@ -16,9 +19,9 @@ sol!(
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    // Token Address
+    // Token Addresses (JSON array format)
     #[arg(short, long)]
-    address: String,
+    addresses: String,
 
     /// RPC url
     #[arg(short, long)]
@@ -28,25 +31,48 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
-    // TODO: accept many addresses
-    let token_address = Address::parse_checksummed(&args.address, None)?;
+    
+    // Parse addresses from JSON array
+    let addresses: Vec<String> = from_str(&args.addresses)?;
+    let addresses: Vec<Address> = addresses
+        .into_iter()
+        .map(|addr| Address::parse_checksummed(&addr, None))
+        .collect::<Result<Vec<_>, _>>()?;
+
     // define rpc url
     let rpc_url = args.rpc_url.parse()?;
     let provider = ProviderBuilder::new().connect_http(rpc_url);
 
-    // TODO: loop through all addresses
-    // Create a contract instance.
-    let erc20 = IERC20::new(token_address, &provider);
+    let mut all_token_data = Vec::new();
 
-    // Multicall to get the token info
-    let multicall = provider
-        .multicall()
-        .add(erc20.name())
-        .add(erc20.symbol())
-        .add(erc20.decimals());
-    let (name, symbol, decimals) = multicall.aggregate().await?;
-    println!("{name}, {symbol}, {decimals}, {token_address}");
-    // TODO: write to json file
+    // Process each address
+    for token_address in addresses {
+        // Create a contract instance.
+        let erc20 = IERC20::new(token_address, &provider);
+
+        // Multicall
+        let multicall = provider
+            .multicall()
+            .add(erc20.name())
+            .add(erc20.symbol())
+            .add(erc20.decimals());
+        let (name, symbol, decimals) = multicall.aggregate().await?;
+        println!("{name}, {symbol}, {decimals}");
+
+        // Add to token data collection
+        all_token_data.push(json!({
+            "address": token_address.to_string(),
+            "name": name,
+            "symbol": symbol,
+            "decimals": decimals
+        }));
+    }
+
+    // Write all token data to JSON file
+    let json_string = to_string_pretty(&all_token_data)?;
+    let mut file = File::create("token_data.json")?;
+    file.write_all(json_string.as_bytes())?;
+    println!("Token data written to token_data.json");
 
     Ok(())
 }
