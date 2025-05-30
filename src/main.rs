@@ -72,14 +72,14 @@ async fn main() -> Result<()> {
             "decimals": decimals
         }));
     }
-    println!("\n--------------------------------\n");
+    println!("\n--------------------------------");
 
     // Write to JSON file if --json flag is set
     if args.json {
         let json_string = to_string_pretty(&all_token_data)?;
         let mut file = File::create("token_data.json")?;
         file.write_all(json_string.as_bytes())?;
-        println!("Token data written to token_data.json");
+        println!("\nToken data written to token_data.json");
     }
 
     Ok(())
