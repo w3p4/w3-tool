@@ -19,13 +19,17 @@ sol!(
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    // Token Addresses (JSON array format)
-    #[arg(short, long)]
+    /// Token Addresses (JSON array format) e.g. '["0x123..", "0x456.."]'
+    #[arg(short = 'a', long)]
     addresses: String,
 
-    /// RPC url
-    #[arg(short, long)]
+    /// RPC url e.g. 'https://rpc.ankr.com/eth'
+    #[arg(short = 'r', long)]
     rpc_url: String,
+
+    /// Output as JSON file
+    #[arg(short = 'j', long)]
+    json: bool,
 }
 
 #[tokio::main]
@@ -45,6 +49,7 @@ async fn main() -> Result<()> {
 
     let mut all_token_data = Vec::new();
 
+    println!("----------- Tokens -------------\n");
     // Process each address
     for token_address in addresses {
         // Create a contract instance.
@@ -67,12 +72,15 @@ async fn main() -> Result<()> {
             "decimals": decimals
         }));
     }
+    println!("\n--------------------------------\n");
 
-    // Write all token data to JSON file
-    let json_string = to_string_pretty(&all_token_data)?;
-    let mut file = File::create("token_data.json")?;
-    file.write_all(json_string.as_bytes())?;
-    println!("Token data written to token_data.json");
+    // Write to JSON file if --json flag is set
+    if args.json {
+        let json_string = to_string_pretty(&all_token_data)?;
+        let mut file = File::create("token_data.json")?;
+        file.write_all(json_string.as_bytes())?;
+        println!("Token data written to token_data.json");
+    }
 
     Ok(())
 }
