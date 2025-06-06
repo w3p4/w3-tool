@@ -28,7 +28,7 @@ pub async fn get_token_info(
     // Parse addresses
     let addresses: Vec<Address> = addresses
         .into_iter()
-        .map(|addr| Address::parse_checksummed(&addr, None))
+        .map(|addr| addr.parse::<Address>())
         .collect::<Result<Vec<_>, _>>()?;
 
     // Setup provider
