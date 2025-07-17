@@ -50,7 +50,7 @@ pub async fn get_token_info(
             .add(erc20.symbol())
             .add(erc20.decimals());
         let (name, symbol, decimals) = multicall.aggregate().await?;
-        println!("{name}, {symbol}, {decimals}");
+        println!("name: {name}, symbol: {symbol}, decimals: {decimals}");
 
         // Add to token data collection
         all_token_data.push(json!({
