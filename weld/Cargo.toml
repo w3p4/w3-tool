@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-tokens = { path = "../tokens" }
+token = { path = "../token" }
 clap = { workspace = true }
 eyre = { workspace = true }
 tokio = { workspace = true }
-serde_json = { workspace = true } 
+serde_json = { workspace = true }

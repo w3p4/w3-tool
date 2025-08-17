@@ -1,5 +1,5 @@
 [package]
-name = "tokens"
+name = "token"
 version = "0.1.0"
 edition = "2024"
 
@@ -8,4 +8,4 @@ alloy = { workspace = true }
 alloy-provider = { workspace = true }
 eyre = { workspace = true }
 serde_json = { workspace = true }
-tokio = { workspace = true } 
+tokio = { workspace = true }

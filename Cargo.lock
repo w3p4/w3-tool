@@ -3653,7 +3653,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tokens"
+name = "token"
 version = "0.1.0"
 dependencies = [
  "alloy",
@@ -4117,7 +4117,7 @@ dependencies = [
  "clap",
  "eyre",
  "serde_json",
- "tokens",
+ "token",
  "tokio",
 ]
 

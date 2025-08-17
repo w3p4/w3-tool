@@ -1,8 +1,5 @@
 [workspace]
-members = [
-    "tokens",
-    "weld"
-]
+members = ["token", "weld"]
 
 [workspace.dependencies]
 alloy = { version = "0.15.9", features = ["full"] }
