@@ -22,9 +22,9 @@ enum Commands {
         #[arg(short = 'r', long)]
         rpc_url: String,
 
-        /// Output as JSON file
-        #[arg(short = 'j', long)]
-        json: bool,
+        /// Write token information to file
+        #[arg(short = 'w')]
+        is_write: bool,
     },
 }
 
@@ -36,10 +36,10 @@ async fn main() -> Result<()> {
         Commands::TokensInfo {
             addresses,
             rpc_url,
-            json,
+            is_write,
         } => {
             let addresses: Vec<String> = from_str(&addresses)?;
-            get_tokens_info(addresses, rpc_url, json).await?;
+            get_tokens_info(addresses, rpc_url, is_write).await?;
         }
     }
 
