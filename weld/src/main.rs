@@ -1,7 +1,9 @@
 use clap::{Parser, Subcommand};
 use eyre::Result;
 use serde_json::from_str;
-use token::get_tokens_info;
+use token::TokenManager;
+
+const DEFAULT_FILE_NAME: &str = "tokens_info.json";
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -39,7 +41,13 @@ async fn main() -> Result<()> {
             is_write,
         } => {
             let addresses: Vec<String> = from_str(&addresses)?;
-            get_tokens_info(addresses, rpc_url, is_write).await?;
+
+            let mut token_manager = TokenManager::new(rpc_url);
+            token_manager.get_tokens_info(addresses).await?;
+
+            if is_write {
+                token_manager.write_to_file(DEFAULT_FILE_NAME)?;
+            }
         }
     }
 

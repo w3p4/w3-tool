@@ -11,22 +11,26 @@ pub use service::TokenService as Service;
 pub use types::TokenInfo;
 pub use utils::parse_addresses;
 
-const FILE_NAME: &str = "token_infos.json";
+pub struct TokenManager {
+    service: TokenService,
+}
 
-pub async fn get_tokens_info(
-    addresses: Vec<String>,
-    rpc_url: String,
-    is_write_file: bool,
-) -> Result<()> {
-    let parsed_addresses = parse_addresses(addresses)?;
-
-    let mut token_service = TokenService::new(rpc_url);
-    token_service.get_tokens_info(parsed_addresses).await?;
-    token_service.print_token_infos();
-
-    if is_write_file {
-        token_service.write_to_file(FILE_NAME);
+impl TokenManager {
+    pub fn new(rpc_url: String) -> Self {
+        Self {
+            service: TokenService::new(rpc_url),
+        }
     }
 
-    Ok(())
+    pub async fn get_tokens_info(&mut self, addresses: Vec<String>) -> Result<()> {
+        let parsed_addresses = parse_addresses(addresses)?;
+        self.service.get_tokens_info(parsed_addresses).await?;
+        self.service.print_token_infos();
+        Ok(())
+    }
+
+    pub fn write_to_file(&self, file_name: &str) -> Result<()> {
+        self.service.write_to_file(file_name)?;
+        Ok(())
+    }
 }

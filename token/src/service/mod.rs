@@ -31,7 +31,7 @@ impl TokenService {
         Ok(())
     }
 
-    pub fn convert_to_json_string(&self) -> String {
+    pub fn convert_to_json_string(&self) -> Result<String> {
         let json_data: Vec<_> = self
             .token_infos
             .iter()
@@ -44,14 +44,15 @@ impl TokenService {
                 })
             })
             .collect();
-        let json_string = to_string_pretty(&json_data).unwrap();
-        json_string
+        let json_string = to_string_pretty(&json_data)?;
+        Ok(json_string)
     }
 
-    pub fn write_to_file(&self, file_name: &str) {
-        let json_string = self.convert_to_json_string();
+    pub fn write_to_file(&self, file_name: &str) -> Result<()> {
+        let json_string = self.convert_to_json_string()?;
         let mut file = File::create(file_name).unwrap();
         file.write_all(json_string.as_bytes()).unwrap();
+        Ok(())
     }
 
     pub fn print_token_infos(&self) {
